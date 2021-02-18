@@ -47,3 +47,8 @@ function db_select($query)
     }
     return $rows;
 }
+
+function dd($var)
+{
+    die(var_dump($var));
+}

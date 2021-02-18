@@ -70,12 +70,36 @@ include_once "includes/functions.inc.php";
 
                 <tbody>
 <?php
-$sql = "SELECT * FROM contacts";
+//Handling THE PAGINATION
+if(isset($_GET['page']))
+{
+    $page = $_GET['page'];
+}
+else
+{
+    $page = 1;
+}
+$no_of_records_per_page = 4;
+
+$start = ($page - 1) * $no_of_records_per_page;
+
+$sql = "SELECT COUNT(*) AS total FROM contacts";
+$rows = db_select($sql);
+
+$total_rows = $rows[0]['total'];
+$total_pages = ceil($total_rows / $no_of_records_per_page);
+
+if($page > $total_pages || $page < 1)
+{
+    dd("404 PAGE NOT FOUND");
+}
+
+$sql = "SELECT * FROM contacts LIMIT $start, $no_of_records_per_page";
 $rows = db_select($sql);
 if($rows === false)
 {
     $error = db_error();
-    die(var_dump($error));
+    dd($error);
 }
 foreach($rows as $row):
 ?>
@@ -87,7 +111,7 @@ foreach($rows as $row):
                         <td><?= $row['telephone'];?></td>
                         <td><?= $row['address'];?></td>
                         <td><a class="btn btn-floating green lighten-2"><i class="material-icons">edit</i></a></td>
-                        <td><a class="btn btn-floating red lighten-2 modal-trigger" href="#deleteModal"><i class="material-icons">delete_forever</i></a>
+                        <td><a data-id="<?= $row['id'];?>" class="btn btn-floating red lighten-2 modal-trigger delete-contact" href="#deleteModal"><i class="material-icons">delete_forever</i></a>
                         </td>
                     </tr>
 <?php
@@ -102,13 +126,25 @@ endforeach;
     <div class="row">
         <div class="col s12">
             <ul class="pagination">
-                <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
-                <li class="active"><a href="#!">1</a></li>
-                <li class="waves-effect"><a href="#!">2</a></li>
-                <li class="waves-effect"><a href="#!">3</a></li>
-                <li class="waves-effect"><a href="#!">4</a></li>
-                <li class="waves-effect"><a href="#!">5</a></li>
-                <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+                <li class="waves-effect <?= $page<=1? 'disabled' : ''; ?>">
+                    <a href="<?= $page <=1? '#' : '?page=' .($page-1);?>">
+                        <i class="material-icons" >chevron_left</i>
+                    </a>
+                </li>
+<?php
+for($i=1; $i<=$total_pages; $i++):
+?>
+            <li class="waves-effect <?= $i == $page ? 'active' : '';?>" >
+                <a href="index.php?page=<?=$i;?>"><?= $i;?></a>
+            </li>
+<?php
+endfor;
+?>
+            <li class="waves-effect <?= $page==$total_pages ? 'disabled' : '';?>" >
+                <a href="<?= $page >= $total_pages ? '#' : '?page=' .($page+1);?>">
+                    <i class="material-icons" >chevron_right</i>
+                </a>
+            </li>
             </ul>
         </div>
     </div>
@@ -130,7 +166,7 @@ endforeach;
         </div>
         <div class="modal-footer">
             <a href="#!" class="modal-close btn blue-grey lighten-2 waves-effect">Cancel</a>
-            <a href="#!" class="modal-close btn waves-effect red lighten-2">Agree</a>
+            <a href="#!" class="modal-close btn waves-effect red lighten-2" id ="modal-agree-button">Agree</a>
         </div>
     </div>
     <!-- /Delete Modal Structure -->
@@ -142,6 +178,29 @@ endforeach;
     <script src="js/pages/home.js"></script>
     <!--Custom JS-->
     <script src="js/custom.js" type="text/javascript"></script>
+
+    <script>
+<?php
+$q= "";
+$op = "";
+if(isset($_GET['q'])){
+    $q = $_GET['q'];
+}
+if(isset($_GET['op'])){
+    $op = $_GET['op'];
+}
+
+if($q == 'success' && $op == 'delete'):
+?>
+        var toastHTML = '<span class = "green darken-1" >Contact deleted Sucessfully!</span>';
+        M.toast({
+            html: toastHTML,
+            classes: "green darken-1"
+        });
+<?php
+endif;
+?>
+    </script>
 </body>
 
 </html>
