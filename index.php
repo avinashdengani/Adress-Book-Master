@@ -44,7 +44,7 @@ include_once "includes/functions.inc.php";
     <!-- Add a New Contact Link-->
     <div class="row mt50">
         <div class="col s12 right-align">
-            <a class="btn waves-effect waves-light blue lighten-2" href="add-contact.html"><i
+            <a class="btn waves-effect waves-light blue lighten-2" href="add-contact.php"><i
                     class="material-icons left">add</i> Add
                 New</a>
         </div>
