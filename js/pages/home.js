@@ -29,4 +29,25 @@ $(function(){
             classes: "green darken-1"
         });
     }
+
+    var queryStrings = getUrlVars();
+    var q = queryStrings['q'];
+    var op = queryStrings['op'];
+    if(q === "success" && op === "edited"){
+        var toastHTML = '<span class = "green darken-1"> Contact Edited successfully!</span>';
+        M.toast({
+            html: toastHTML,
+            classes: "green darken-1"
+        });
+    }
+
+    var queryStrings = getUrlVars();
+    var q = queryStrings['q'];
+    var op = queryStrings['op'];
+    if(q === "404" && op === "error"){
+        setTimeout(function(){
+           document.location.href =  'index.php';
+        }, 5000);
+    }
+    
 });

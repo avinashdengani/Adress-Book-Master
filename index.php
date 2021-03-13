@@ -91,7 +91,7 @@ $total_pages = ceil($total_rows / $no_of_records_per_page);
 
 if($page > $total_pages || $page < 1)
 {
-    dd("404 PAGE NOT FOUND");
+    header('Location: 404.php?q=404&op=error');
 }
 
 $sql = "SELECT * FROM contacts LIMIT $start, $no_of_records_per_page";
@@ -110,7 +110,7 @@ foreach($rows as $row):
                         <td><?= $row['birthdate'];?></td>
                         <td><?= $row['telephone'];?></td>
                         <td><?= $row['address'];?></td>
-                        <td><a class="btn btn-floating green lighten-2"><i class="material-icons">edit</i></a></td>
+                        <td><a class="btn btn-floating green lighten-2" href="edit-contact.php?id=<?=$row['id'];?>" ><i class="material-icons">edit</i></a></td>
                         <td><a data-id="<?= $row['id'];?>" class="btn btn-floating red lighten-2 modal-trigger delete-contact" href="#deleteModal"><i class="material-icons">delete_forever</i></a>
                         </td>
                     </tr>
